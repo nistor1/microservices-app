@@ -1,0 +1,200 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-db:5432/user-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      DEVICE_SERVICE_URL: http://localhost:80/device-service/person
+    depends_on:
+      - user-db
+      - device-service
+    deploy:
+      replicas: 2
+    networks:
+      - application_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user-service.rule=Host(`user-service.localhost`) || PathPrefix(`/user-service`)"
+      - "traefik.http.middlewares.user-service-strip.stripprefix.prefixes=/user-service"
+      - "traefik.http.routers.user-service.middlewares=user-service-strip"
+      - "traefik.http.services.user-service.loadbalancer.server.port=8080"
+
+  user-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user-db
+    ports:
+      - "5434:5432"
+    volumes:
+      - user_pgdata:/var/lib/postgresql/data
+    networks:
+      - application_network
+
+  device-service:
+    build:
+      context: ./device
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://device-db:5432/device-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq-docker
+      SPRING_RABBITMQ_PORT: 5672
+    depends_on:
+      - device-db
+      - rabbitmq-docker
+    deploy:
+      replicas: 2
+    networks:
+      - application_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.device-service.rule=Host(`device-service.localhost`) || PathPrefix(`/device-service`)"
+      - "traefik.http.middlewares.device-service-strip.stripprefix.prefixes=/device-service"
+      - "traefik.http.routers.device-service.middlewares=device-service-strip"
+      - "traefik.http.services.device-service.loadbalancer.server.port=8081"
+
+  device-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: device-db
+    ports:
+      - "5433:5432"
+    volumes:
+      - device_pgdata:/var/lib/postgresql/data
+    networks:
+      - application_network
+
+  measurement-service:
+    build:
+      context: ./measurement
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://measurement-db:5432/measurement-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq-docker
+      SPRING_RABBITMQ_PORT: 5672
+    depends_on:
+      - rabbitmq-docker
+      - measurement-db
+    networks:
+      - application_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.measurement-service.rule=Host(`measurement-service.localhost`) || PathPrefix(`/measurement-service`)"
+      - "traefik.http.middlewares.measurement-service-strip.stripprefix.prefixes=/measurement-service"
+      - "traefik.http.routers.measurement-service.middlewares=measurement-service-strip"
+      - "traefik.http.services.measurement-service.loadbalancer.server.port=8082"
+
+  measurement-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: measurement-db
+    ports:
+      - "5435:5432"
+    volumes:
+      - measurement_pgdata:/var/lib/postgresql/data
+    networks:
+      - application_network
+
+  chat-service:
+    build:
+      context: ./chat
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://chat-db:5432/chat-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - chat-db
+    deploy:
+      replicas: 1
+    networks:
+      - application_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chat-service.rule=Host(`chat-service.localhost`) || PathPrefix(`/chat-service`)"
+      - "traefik.http.middlewares.chat-service-strip.stripprefix.prefixes=/chat-service"
+      - "traefik.http.routers.chat-service.middlewares=chat-service-strip"
+      - "traefik.http.services.chat-service.loadbalancer.server.port=8083"
+  
+  chat-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chat-db
+    ports:
+      - "5436:5432"
+    volumes:
+      - chat_pgdata:/var/lib/postgresql/data
+    networks:
+      - application_network
+
+  react-app:
+    build:
+      context: ./react-app/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-service
+    networks:
+      - application_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.react-app.rule=Host(`react-app.localhost`) || PathPrefix(`/react-app`)"
+      - "traefik.http.services.react-app.loadbalancer.server.port=80"
+
+  rabbitmq-docker:
+    image: rabbitmq:management
+    container_name: rabbitmq-docker
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - application_network
+
+  reverse-proxy:
+    image: traefik:v3.2
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --accesslog=true
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --log.level=DEBUG
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik_logs:/var/log/traefik
+    networks:
+      - application_network
+
+volumes:
+  user_pgdata:
+  device_pgdata:
+  measurement_pgdata:
+  chat_pgdata:
+  traefik_logs:
+
+networks:
+  application_network:
+    driver: bridge

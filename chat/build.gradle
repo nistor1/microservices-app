@@ -1,0 +1,72 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'ds.microservice'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+dependencies {
+	// Spring Boot Starters
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+	// Development Tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.36'
+	annotationProcessor 'org.projectlombok:lombok:1.18.36'
+	testCompileOnly 'org.projectlombok:lombok:1.18.36'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+	// JWT (JSON Web Token) for Security
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+	// Databases
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Validation
+	implementation 'javax.validation:validation-api:2.0.0.Final'
+	implementation 'org.hibernate.validator:hibernate-validator:6.0.2.Final'
+	annotationProcessor 'org.hibernate.validator:hibernate-validator-annotation-processor:6.0.2.Final'
+
+	// Jackson for JSON
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations'
+	implementation 'com.fasterxml.jackson.core:jackson-core'
+
+	// Testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Security
+	implementation "org.springframework.security:spring-security-web"
+	implementation "org.springframework.security:spring-security-config"
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
