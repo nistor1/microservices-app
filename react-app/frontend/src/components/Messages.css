@@ -1,0 +1,216 @@
+/* General container for messages */
+.messages-container {
+    display: flex;
+    padding: 20px;
+    width: 100%;
+    margin-top: 60px; /* Acomodare pentru header */
+    position: relative; /* Asigură alinierea corectă a componentelor */
+}
+
+/* User list styling */
+.user-list {
+    width: 250px;
+    position: fixed;
+    top: 80px; /* Se aliniază la marginea din stânga, sub header */
+    left: 20px;
+    height: calc(100vh - 100px); /* Fără a depăși înălțimea ferestrei */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 20px;
+    border-radius: 8px;
+    background-color: #f4f4f4; /* Fond pentru a evidenția zona */
+    box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.1); /* Umbră subtilă pe partea dreaptă */
+}
+
+/* List item styling */
+.user-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-list li {
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.user-list li:hover {
+    background-color: #4CAF50; /* Culoare de fundal când treci cu mouse-ul */
+    color: #fff;
+}
+
+.user-list li.selected {
+    background-color: #4CAF50; /* Culoare pentru utilizatorii selectați */
+    color: white;
+}
+
+/* General container for the messages */
+.central-content {
+    margin-left: 100px; /* Spațiu pentru lista de utilizatori fixată */
+
+    margin-right: 200px; /* Spațiu pentru lista de utilizatori fixată */
+    padding: 20px;
+    width: calc(100% - 300px); /* Ajustare lățime */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Umbra subtilă */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styling for the message list */
+.messages-list {
+    flex-grow: 1;
+    overflow-y: auto; /* Permite derularea mesajelor */
+    padding-right: 10px; /* Un mic spațiu pentru a evita suprapunerea textului cu scroll-ul */
+    max-height: 300px; /* Limitează înălțimea mesajelor și permite scroll-ul */
+    margin-bottom: 20px; /* Spațiu sub lista de mesaje */
+}
+
+/* Styling for individual messages */
+.message {
+    margin-bottom: 15px;
+    padding: 5px;
+    border-radius: 10px;
+    max-width: 60%; /* Mesajele nu vor ocupa toată lățimea */
+    line-height: 1;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word; /* Evită depășirea textului */
+    position: relative;
+}
+
+/* Message sent by the user (my-message) */
+.my-message {
+    margin-left: 160px;
+    background-color: #4CAF50; /* Culoare pentru mesajele trimise de utilizator */
+    color: white;
+    align-self: flex-end; /* Aliniere la dreapta */
+    border-top-right-radius: 0px; /* Colțurile mai rotunjite la dreapta */
+    border-top-left-radius: 15px;
+}
+
+/* Message sent by the other user (user-message) */
+.user-message {
+    background-color: #f1f1f1; /* Culoare pentru mesajele altui utilizator */
+    color: #333;
+    align-self: flex-start; /* Aliniere la stânga */
+    border-top-left-radius: 0px; /* Colțuri mai rotunjite la stânga */
+    border-top-right-radius: 15px;
+}
+
+/* Styling for the textarea (writing area) */
+textarea {
+    width: 90%;
+    height: 30px; /* Dimensiune mai mică pentru caseta de scris */
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 15px;
+    transition: border-color 0.3s;
+    resize: none; /* Dezactivează redimensionarea */
+}
+
+/* When textarea is focused */
+textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Send button styling */
+.message-form button {
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.message-form button:hover {
+    background-color: #45a049;
+}
+
+/* For smooth scrolling behavior in messages */
+.messages-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+}
+
+.messages-list::-webkit-scrollbar-thumb:hover {
+    background-color: #999;
+}
+
+/* Final adjustments */
+.multi-select-btn {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.multi-select-btn:hover {
+    background-color: #45a049;
+}
+
+.multi-select-btn.active {
+    background: #a2c839;
+}
+
+
+
+/* Indicatorul de typing */
+.typing-indicator {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.typing-light {
+    display: flex;
+    align-items: center;
+}
+
+.typing-light span:first-child {
+    margin-bottom: -480px;
+    margin-left: -145px;
+    width: 30px;
+    height: 30px;
+    border-radius: 30%;
+    background-color: #00ff00; /* Verde pentru beculețul aprins */
+    animation: blink 1s infinite;
+    margin-right: 15px;
+}
+
+.typing-light span {
+    margin-bottom: -480px;
+    font-size: 20px;
+}
+
+@keyframes blink {
+    0% { opacity: 0.1; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}

@@ -1,0 +1,35 @@
+/* Navbar.css */
+.navbar {
+
+    .logout-button {
+        position: absolute;
+        top: 5px; /* Ajustat mai aproape de colț */
+        right: 20px;
+        padding: 8px 12px;
+        background-color: transparent; /* Fundal transparent */
+        color: #ff4b4b; /* Text proeminent */
+        font-size: 16px; /* Mărime font mai mare pentru proeminență */
+        font-weight: bold; /* Text mai îngroșat */
+        border: none; /* Fără bordură */
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .messages-button {
+        position: absolute;
+        top: 70px; /* Ajustat mai aproape de colț */
+        right: 20px;
+        padding: 12px 16px; /* Increased padding */
+        width: 200px; /* Increased width */
+        background-color: darkgreen; /* Fundal transparent */
+        font-size: 18px; /* Increased font size */
+        font-weight: bold; /* Text mai îngroșat */
+        border: none; /* Fără bordură */
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .logout-button:hover {
+        color: #ff6b6b; /* Culoare mai accentuată la hover */
+    }
+}
